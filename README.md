@@ -39,11 +39,11 @@ cd .../Native-Study-Backend
 python3 main.py
 ```
 
-# Open Swagger-ui
+## Open Swagger-ui
 
 - http://localhost:8080/docs
 
-# Open Redoc-ui
+## Open Redoc-ui
 
 - http://localhost:8080/redoc
 
