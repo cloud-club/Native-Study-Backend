@@ -1,0 +1,48 @@
+version: "3.8"
+
+services:
+  music_service:
+    container_name: music_service
+    image: ${REGISTRY_URL}music_service:${DEPLOY_VERSION}
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+      args:
+        - UBUNTU_VERSION=${UBUNTU_VERSION}
+    restart: unless-stopped
+    env_file: .env
+    depends_on:
+      - file_server1
+      - file_Server2
+    ports:
+      - ${MUSIC_SERVICE_EXTERNAL_PORT}:${MUSIC_SERVICE_INTERNAL_PORT}
+    networks:
+      - backend
+  file_server:
+    container_name: file_server
+    image: minio/minio:RELEASE.2022-04-01T03-41-39Z
+    env_file: .env
+    ports:
+      - ${MINIO_API_PORT}:${MINIO_API_PORT}
+      - ${MINIO_DASHBOARD_PORT}:${MINIO_DASHBOARD_PORT}
+    networks:
+      - backend
+    volumes:
+      - file_storage:/DATA
+    environment:
+      - MINIO_ROOT_USER=${MINIO_ROOT_USER}
+      - MINIO_ROOT_PASSWORD=${MINIO_ROOT_PASSWORD}
+    command: server /DATA --console-address ":9001"
+
+volumes:
+  file_storage:
+    driver: local
+
+networks:
+  backend:
+    name: backend
+    driver: bridge
+    ipam:
+      driver: default
+      config:
+        - subnet: ${NETWORK_SUBNET}
