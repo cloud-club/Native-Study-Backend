@@ -5,14 +5,14 @@
 
 # Installation
 
-## 1. clone project
+## 1. Clone project
 
 ```
 git clone https://github.com/cloud-club/Native-Study-Backend.git
 cd Native-Study-Backend
 ```
 
-## 2. install [poetry](https://python-poetry.org/docs/)
+## 2. Install [poetry](https://python-poetry.org/docs/)
 
 ### osx / linux
 
@@ -26,10 +26,18 @@ curl -sSL https://raw.githubusercontent.com/python-poetry/poetry/master/get-poet
 (Invoke-WebRequest -Uri https://raw.githubusercontent.com/python-poetry/poetry/master/get-poetry.py -UseBasicParsing).Content | python -
 ```
 
-## 3. install python dependency
+## 3. Install python dependency
 
 ```
 poetry install --no-dev
+```
+
+## 4. Generate env file and Write env
+
+```
+python3 resource/generate_env.py
+
+cp .env.example .env
 ```
 
 # Run Service
