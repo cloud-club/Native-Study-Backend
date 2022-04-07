@@ -8,6 +8,7 @@ from app.schema.response import music as music_resp
 
 app = FastAPI(
     title="CNP Music Streaming Service",
+    version="0.2.0",
 )
 
 APP_ENV = environ.get("APP_ENV", "dev")
