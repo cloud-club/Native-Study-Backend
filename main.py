@@ -2,7 +2,7 @@ from os import environ
 
 import uvicorn
 from fastapi import FastAPI, Form, Path, Query, UploadFile, status
-from fastapi.responses import JSONResponse
+from fastapi.responses import JSONResponse, PlainTextResponse
 
 from app.schema.response import music as music_resp
 
@@ -13,6 +13,11 @@ app = FastAPI(
 
 APP_ENV = environ.get("APP_ENV", "dev")
 reload = APP_ENV != "production"
+
+
+@app.get("/")
+def ping():
+    return PlainTextResponse("pong")
 
 
 @app.post(
