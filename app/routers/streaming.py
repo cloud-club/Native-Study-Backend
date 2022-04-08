@@ -1,4 +1,5 @@
 from fastapi import APIRouter, Path, status
+from fastapi.encoders import jsonable_encoder
 from fastapi.responses import JSONResponse
 
 from app.schema.response import music as music_resp
@@ -18,5 +19,5 @@ async def stream_music(
     """요청한 음악을 스트리밍합니다."""
     return JSONResponse(
         status_code=status.HTTP_200_OK,
-        content=music_resp.StreamMusicResponse,
+        content=jsonable_encoder(music_resp.StreamMusicResponse),
     )

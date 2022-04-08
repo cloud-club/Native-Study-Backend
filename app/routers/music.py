@@ -1,4 +1,5 @@
 from fastapi import APIRouter, Form, Path, Query, UploadFile, status
+from fastapi.encoders import jsonable_encoder
 from fastapi.responses import JSONResponse
 
 from app.schema.response import music as music_resp
@@ -25,7 +26,7 @@ async def upload_music(
     """음악 파일과 음악 메타정보를 저장 합니다."""
     return JSONResponse(
         status_code=status.HTTP_201_CREATED,
-        content=music_resp.UploadMusicResponse,
+        content=jsonable_encoder(response),
     )
 
 
@@ -47,7 +48,7 @@ async def get_music_info(
     """요청한 음악에 대한 정보를 반환합니다."""
     return JSONResponse(
         status_code=status.HTTP_200_OK,
-        content=music_resp.MusicResponse,
+        content=jsonable_encoder(music_resp.MusicResponse),
     )
 
 
@@ -72,5 +73,5 @@ async def serve_music_chart(
     """음원 차트를 반환합니다."""
     return JSONResponse(
         status_code=status.HTTP_200_OK,
-        content=music_resp.MusicChartResponse,
+        content=jsonable_encoder(music_resp.MusicChartResponse),
     )
