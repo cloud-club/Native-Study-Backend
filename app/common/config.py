@@ -14,6 +14,13 @@ class settings(BaseSettings):
     # music service
     MUSIC_SERVICE_INTERNAL_PORT: int
 
+    # mongoDB
+    MONGO_HOST_NAME: str
+    MONGO_PORT: int
+    MONGO_INITDB_ROOT_USERNAME: str
+    MONGO_INITDB_ROOT_PASSWORD: str
+    DATABASE_NAME: str
+
     class Config:
         env_file = ".env"
         env_file_encoding = "utf-8"
