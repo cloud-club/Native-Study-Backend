@@ -7,7 +7,7 @@ router = APIRouter()
 
 
 @router.get(
-    "/v1/api/streaming/{music_id}",
+    "/{music_id}",
     responses={
         200: {"model": music_resp.StreamMusicResponse, "description": "요청한 음악을 스트리밍"},
     },
