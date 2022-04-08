@@ -1,0 +1,16 @@
+version: "3.8"
+
+services:
+  music_service:
+    image: ${REGISTRY_URL}music_service:${DEVELOP_VERSION}
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+      args:
+        - UBUNTU_VERSION=${UBUNTU_VERSION}
+    restart: unless-stopped
+    env_file: .env
+    volumes:
+      - .:/workspace
+    ports:
+      - ${MUSIC_SERVICE_EXTERNAL_PORT}:${MUSIC_SERVICE_INTERNAL_PORT}
