@@ -12,9 +12,11 @@ services:
   file_server:
     container_name: file_server
     image: minio/minio:RELEASE.2022-04-01T03-41-39Z
+    restart: always
     env_file: .env
+    expose:
+      - ${MINIO_API_PORT}
     ports:
-      - ${MINIO_API_PORT}:${MINIO_API_PORT}
       - ${MINIO_DASHBOARD_PORT}:${MINIO_DASHBOARD_PORT}
     networks:
       - backend
@@ -24,9 +26,24 @@ services:
       - MINIO_ROOT_USER=${MINIO_ROOT_USER}
       - MINIO_ROOT_PASSWORD=${MINIO_ROOT_PASSWORD}
     command: server /DATA --console-address ":9001"
+  mongo:
+    container_name: mongo
+    image: mongo:5
+    restart: always
+    expose:
+      - ${MONGO_PORT}
+    networks:
+      - backend
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=${MONGO_INITDB_ROOT_USERNAME}
+      - MONGO_INITDB_ROOT_PASSWORD=${MONGO_INITDB_ROOT_PASSWORD}
+    volumes:
+      - mongo:/data/db
 
 volumes:
   file_storage:
+    driver: local
+  mongo:
     driver: local
 
 networks:
