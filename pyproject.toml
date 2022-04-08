@@ -19,6 +19,7 @@ uvicorn = "0.17.6"
 PyAudio = "0.2.11"
 python-multipart = "0.0.5"
 python-dotenv = "0.20.0"
+rich = "^12.2.0"
 
 [tool.poetry.dev-dependencies]
 pyinstrument = "^4.1.1"
