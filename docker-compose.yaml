@@ -12,8 +12,7 @@ services:
     restart: unless-stopped
     env_file: .env
     depends_on:
-      - file_server1
-      - file_Server2
+      - file_server
     ports:
       - ${MUSIC_SERVICE_EXTERNAL_PORT}:${MUSIC_SERVICE_INTERNAL_PORT}
     networks:
