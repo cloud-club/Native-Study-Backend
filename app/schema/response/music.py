@@ -8,8 +8,6 @@ from app.schema.response.common import BaseResponse, response_metadata
 
 
 class UploadMusicResponse(BaseResponse):
-    musics: t.List[t.Any]
-
     class Config:
         schema_extra = {
             "example": {
