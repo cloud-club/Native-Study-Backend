@@ -35,25 +35,32 @@ poetry install --no-dev
 ## 4. Generate env file and Write env
 
 ```
-python3 resource/generate_env.py
-
 cp .env.example .env
 ```
 
 # Run Service
+
+## local
 
 ```
 cd .../Native-Study-Backend
 python3 main.py
 ```
 
+## docker
+
+```
+docker-compose build
+docker-compose up -d
+```
+
 ## Open Swagger-ui
 
-- http://localhost:8080/docs
+- http://localhost/docs
 
 ## Open Redoc-ui
 
-- http://localhost:8080/redoc
+- http://localhost/redoc
 
 # Reference
 
