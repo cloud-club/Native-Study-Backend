@@ -1,0 +1,11 @@
+# python
+**/__pycache__/*
+
+# config file
+.pre-commit-config.yaml
+docker-compose*.yaml
+
+# resource file
+*.md
+.env.example
+.gitignore
