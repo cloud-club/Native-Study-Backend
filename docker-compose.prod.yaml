@@ -12,3 +12,18 @@ services:
     env_file: .env
     ports:
       - ${MUSIC_SERVICE_EXTERNAL_PORT}:${MUSIC_SERVICE_INTERNAL_PORT}
+  file_server:
+    env_file: .env
+    expose:
+      - ${MINIO_API_PORT}
+    environment:
+      - MINIO_ROOT_USER=${MINIO_ROOT_USER}
+      - MINIO_ROOT_PASSWORD=${MINIO_ROOT_PASSWORD}
+    command: server /DATA --console-address ":${MINIO_DASHBOARD_PORT}"
+  mongo:
+    env_file: .env
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=${MONGO_INITDB_ROOT_USERNAME}
+      - MONGO_INITDB_ROOT_PASSWORD=${MONGO_INITDB_ROOT_PASSWORD}
+    expose:
+      - ${MONGO_PORT}
