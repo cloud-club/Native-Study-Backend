@@ -1,0 +1,11 @@
+from minio import Minio
+
+from app.common.config import settings
+
+mc = Minio(
+    f"{settings.MINIO_HOST_NAME}:{settings.MINIO_API_PORT}",
+    access_key=settings.MINIO_ROOT_USER,
+    secret_key=settings.MINIO_ROOT_PASSWORD,
+    region=settings.MINIO_REGION,
+    secure=False,
+)
