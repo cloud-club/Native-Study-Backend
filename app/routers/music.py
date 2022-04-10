@@ -5,6 +5,9 @@ from fastapi import APIRouter, File, Form, Path, Query, UploadFile, status
 from fastapi.encoders import jsonable_encoder
 from fastapi.responses import JSONResponse
 
+from app.database.connect import db
+from app.schema.entity.file import AudioFile
+from app.schema.entity.music import MusicFile, MusicInDB
 from app.schema.response import music as music_resp
 from app.schema.response.common import RequestMetadata, ResponseMetadata
 from app.utils.time import elapsed, time2str
@@ -28,23 +31,54 @@ async def upload_music(
     release_date: str = Form(None),
     music_file: UploadFile = File(...),
 ) -> JSONResponse:
-    """음악 파일과 음악 메타정보를 저장 합니다."""
+    """음악 파일과 음악 메타정보를 저장 합니다.
+
+    Args:
+        music_name (str): 음악 이름.
+        singer_name (str): 가수 이름.
+        release_date (str, Optional): 발매 일자.
+        music_file (UploadFile): 음악 파일.
+
+    Returns:
+        JSONResponse:
+            request_metadata (dict): 요청 정보
+            response_metadata (dict): 응답 처리 정보
+    """
     request_time = datetime.now()
     request_metadata = RequestMetadata(
         request_id=str(uuid4()),
         request_data={
-            "music_id": 112453,
             "music_name": music_name,
             "singer_name": singer_name,
             "release_date": release_date,
-            "play_total": 128,
             "music_file": music_file.filename,
         },
     )
 
-    # @TODO: file validation
-    # @TODO: save file in minIO
-    # @TODO: save data in DB
+    # file validation
+    binary = await music_file.read()
+    audio_file = AudioFile(binary, content_type=music_file.content_type)
+
+    # save file in minIO
+    path = await audio_file.save(music_file.filename)
+
+    # save data in DB
+    metadata = MusicFile(
+        name=music_file.filename,
+        path=path,
+        **audio_file.metadata,
+    )
+    fileDB = db.file
+    file_id = fileDB.insert_one(metadata.dict()).inserted_id
+    music = MusicInDB(
+        name=music_name,
+        singer=singer_name,
+        release_date=release_date,
+        play_total=0,
+        file_id=file_id,
+    )
+    musicDB = db.music
+    musicDB.insert_one(music.dict())
 
     response_time = datetime.now()
     response_metadata = ResponseMetadata(
