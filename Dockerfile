@@ -5,6 +5,7 @@ FROM ubuntu:${UBUNTU_VERSION}
 ENV LANG=C.UTF-8
 ENV LC_ALL=C.UTF-8
 ENV TZ=Asian/Seoul
+ENV PYTHONPATH=$PATH:/workspace
 
 RUN apt-get -qq update
 RUN DEBIAN_FRONTEND=noninteractive apt-get -qq -y install python3-pip \
