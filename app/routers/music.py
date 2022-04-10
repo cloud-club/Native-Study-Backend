@@ -113,7 +113,18 @@ async def get_music_info(
     music_name: str = Query(..., description="음악 이름"),
     singer_name: str = Query(None, description="가수 이름"),
 ) -> JSONResponse:
-    """요청한 음악에 대한 정보를 반환합니다."""
+    """요청한 음악에 대한 정보를 반환합니다.
+
+    Args:
+        music_name (str): 음악 이름.
+        singer_name (str, optional): 가수 이름.
+
+    Returns:
+        JSONResponse:
+            request_metadata (dict): 요청 정보
+            response_metadata (dict): 응답 처리 정보
+            music (Music): 음악과 음악 파일에 대한 정보
+    """
     request_time = datetime.now()
     request_data = dict(music_name=music_name)
     if singer_name:
