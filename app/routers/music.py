@@ -1,13 +1,14 @@
 from datetime import datetime
 from uuid import uuid4
 
-from fastapi import APIRouter, File, Form, Path, Query, UploadFile, status
+from bson.objectid import ObjectId
+from fastapi import APIRouter, File, Form, Query, UploadFile, status
 from fastapi.encoders import jsonable_encoder
 from fastapi.responses import JSONResponse
 
 from app.database.connect import db
 from app.schema.entity.file import AudioFile
-from app.schema.entity.music import MusicFile, MusicInDB
+from app.schema.entity.music import Music, MusicFile, MusicInDB
 from app.schema.response import music as music_resp
 from app.schema.response.common import RequestMetadata, ResponseMetadata
 from app.utils.time import elapsed, time2str
@@ -16,7 +17,7 @@ router = APIRouter()
 
 
 @router.post(
-    "/",
+    "/musics",
     responses={
         201: {
             "model": music_resp.UploadMusicResponse,
@@ -97,7 +98,7 @@ async def upload_music(
 
 
 @router.get(
-    "/{music_id}",
+    "/music",
     responses={
         200: {
             "model": music_resp.MusicResponse,
@@ -109,17 +110,54 @@ async def upload_music(
     },
 )
 async def get_music_info(
-    music_id: str = Path(..., description="음원 고유 아이디"),
+    music_name: str = Query(..., description="음악 이름"),
+    singer_name: str = Query(None, description="가수 이름"),
 ) -> JSONResponse:
     """요청한 음악에 대한 정보를 반환합니다."""
+    request_time = datetime.now()
+    request_data = dict(music_name=music_name)
+    if singer_name:
+        request_data.update(dict(singer_name=singer_name))
+    request_metadata = RequestMetadata(
+        request_id=str(uuid4()),
+        request_data=request_data,
+    )
+
+    # get music info from mongoDB
+    fileDB = db.file
+    musicDB = db.music
+
+    music_data = musicDB.find_one(
+        {
+            "name": music_name,
+            "singer": singer_name,
+        }
+    )
+    file_data = fileDB.find_one({"_id": ObjectId(music_data["file_id"])})
+    music = Music(
+        file=file_data,
+        **music_data,
+    )
+
+    response_time = datetime.now()
+    response_metadata = ResponseMetadata(
+        request_time=time2str(request_time),
+        response_time=time2str(response_time),
+        elapsed_time=elapsed(request_time, response_time),
+    )
+    response = music_resp.MusicResponse(
+        request_metadata=request_metadata,
+        response_metadata=response_metadata,
+        music=music,
+    )
     return JSONResponse(
         status_code=status.HTTP_200_OK,
-        content=jsonable_encoder(music_resp.MusicResponse),
+        content=jsonable_encoder(response),
     )
 
 
 @router.get(
-    "/",
+    "/musics",
     responses={
         200: {
             "model": music_resp.MusicChartResponse,
