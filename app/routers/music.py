@@ -183,7 +183,7 @@ async def get_music_info(
     },
 )
 async def serve_music_chart(
-    limit: int = Query(10, description="불러올 차트의 개수")
+    limit: int = Query(10, description="불러올 차트의 개수"),
 ) -> JSONResponse:
     """음원 차트를 반환합니다."""
     request_time = datetime.now()
