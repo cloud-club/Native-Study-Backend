@@ -31,7 +31,7 @@ def create_app() -> FastAPI:
     )
     app.include_router(
         music.router,
-        prefix="/v1/api/musics",
+        prefix="/v1/api",
         tags=["music"],
     )
 
