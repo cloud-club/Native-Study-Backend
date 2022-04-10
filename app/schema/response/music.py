@@ -38,7 +38,7 @@ class MusicResponse(BaseResponse):
                     },
                 },
                 "response_metadata": response_metadata,
-                "musics": music_example,
+                "music": music_example,
             }
         }
 
