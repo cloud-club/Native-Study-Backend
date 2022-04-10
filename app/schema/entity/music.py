@@ -7,10 +7,11 @@ from app.schema.entity.pyobject import PydanticObjectId
 
 music_file_example = {
     "name": "12842lalsdfa.wav",
-    "langth": 58.09,
+    "length": 58.09,
     "rate": 44100,
     "channels": 2,
     "path": "/music/12842lalsdfa.wav",
+    "size": 10406738,
 }
 
 music_in_db_example = {
@@ -61,7 +62,6 @@ class MusicInDB(BaseModel):
 
 
 class Music(BaseModel):
-    _id: str
     name: str
     singer: str
     release_date: t.Optional[str]
