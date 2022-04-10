@@ -10,6 +10,8 @@ class settings(BaseSettings):
     MINIO_API_PORT: int
     MINIO_ROOT_USER: str
     MINIO_ROOT_PASSWORD: str
+    MINIO_REGION: str = "ap-northeast-2"
+    MINIO_USE_TLS: bool = False
 
     # music service
     MUSIC_SERVICE_INTERNAL_PORT: int
