@@ -21,6 +21,8 @@ python-multipart = "0.0.5"
 python-dotenv = "0.20.0"
 rich = "12.2.0"
 pymongo = "4.1.0"
+mutagen = "1.45.1"
+minio = "7.1.6"
 
 [tool.poetry.dev-dependencies]
 pyinstrument = "^4.1.1"
