@@ -14,11 +14,9 @@ class UploadMusicResponse(BaseResponse):
                 "request_metadata": {
                     "request_id": str(uuid4()),
                     "request_data": {
-                        "music_id": 112453,
                         "music_name": "다시만난세계",
                         "singer_name": "소녀시대",
                         "release_date": "2022-07-25",
-                        "play_total": 128,
                         "music_file": "/Music/[효과음]BOING #2.mp3",
                     },
                 },
