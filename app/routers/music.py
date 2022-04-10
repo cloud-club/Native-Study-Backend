@@ -175,18 +175,52 @@ async def get_music_info(
             "description": "음원 목록을 반환합니다.",
         },
         400: {
-            "description": "올바른 형태의 offset이 아닙니다.",
+            "description": "조회하려는 데이터의 범위를 초과했습니다.",
         },
         404: {
-            "description": "offset이 범위를 벗어났습니다.",
+            "description": "데이터가 존재하지 않습니다.",
         },
     },
 )
 async def serve_music_chart(
-    offset: str = Query(None, description="불러올 차트의 오프셋 [0 = no limit] e.g.)1-2,5")
+    limit: int = Query(10, description="불러올 차트의 개수")
 ) -> JSONResponse:
     """음원 차트를 반환합니다."""
+    request_time = datetime.now()
+    request_data = dict(limit=limit)
+
+    request_metadata = RequestMetadata(
+        request_id=str(uuid4()),
+        request_data=request_data,
+    )
+
+    # get music info from mongoDB
+    fileDB = db.file
+    musicDB = db.music
+    musics = list()
+
+    music_datas = musicDB.find()[:limit]
+    for music_data in music_datas:
+        file_data = fileDB.find_one({"_id": ObjectId(music_data["file_id"])})
+        musics.append(
+            Music(
+                file=file_data,
+                **music_data,
+            )
+        )
+
+    response_time = datetime.now()
+    response_metadata = ResponseMetadata(
+        request_time=time2str(request_time),
+        response_time=time2str(response_time),
+        elapsed_time=elapsed(request_time, response_time),
+    )
+    response = music_resp.MusicChartResponse(
+        request_metadata=request_metadata,
+        response_metadata=response_metadata,
+        musics=musics,
+    )
     return JSONResponse(
         status_code=status.HTTP_200_OK,
-        content=jsonable_encoder(music_resp.MusicChartResponse),
+        content=jsonable_encoder(response),
     )
