@@ -11,11 +11,12 @@ def create_app() -> FastAPI:
     )
 
     # middleware
+    # FIXME: delete wildcard
     app.add_middleware(
         CORSMiddleware,
-        allow_origins=[],
-        allow_methods=[],
-        allow_headers=[],
+        allow_origins=["*"],
+        allow_methods=["*"],
+        allow_headers=["*"],
     )
 
     # router
