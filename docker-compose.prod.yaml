@@ -8,11 +8,12 @@ services:
       dockerfile: ./Dockerfile
       args:
         - UBUNTU_VERSION=${UBUNTU_VERSION}
-    restart: unless-stopped
+    restart: always
     env_file: .env
     ports:
       - ${MUSIC_SERVICE_EXTERNAL_PORT}:${MUSIC_SERVICE_INTERNAL_PORT}
   file_server:
+    restart: always
     env_file: .env
     expose:
       - ${MINIO_API_PORT}
@@ -34,6 +35,7 @@ services:
       timeout: 20s
       retries: 3
   mongo:
+    restart: always
     env_file: .env
     environment:
       - MONGO_INITDB_ROOT_USERNAME=${MONGO_INITDB_ROOT_USERNAME}
