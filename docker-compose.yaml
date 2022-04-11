@@ -1,4 +1,4 @@
-version: "3.8"
+version: "3"
 
 services:
   music_service:
@@ -34,7 +34,6 @@ volumes:
 
 networks:
   backend:
-    name: backend
     driver: bridge
     ipam:
       driver: default
