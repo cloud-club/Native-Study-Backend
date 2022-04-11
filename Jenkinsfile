@@ -7,7 +7,7 @@ pipeline {
   stages {
     stage('git scm update') {
       steps {
-        git url: 'https://github.com/cloud-club/Native-Study-Backend.git', branch: 'develop'
+        git url: 'git@github.com:cloud-club/Native-Study-Backend.git', branch: 'develop'
       }
     }
     stage('docker build and push') {
