@@ -2,7 +2,7 @@ version: "3.8"
 
 services:
   music_service:
-    image: ${REGISTRY_URL}/music_service:${DEPLOY_VERSION}
+    image: music_service
     build:
       context: .
       dockerfile: ./Dockerfile
