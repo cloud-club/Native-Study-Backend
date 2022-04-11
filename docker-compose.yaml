@@ -3,7 +3,7 @@ version: "3.8"
 services:
   music_service:
     container_name: music_service
-    image: ${REGISTRY_URL}music_service:${DEPLOY_VERSION}
+    image: music_service:${DEPLOY_VERSION}
     restart: unless-stopped
     depends_on:
       - file_server
