@@ -12,20 +12,16 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - name: Build music_service image
-        env:
-          UBUNTU_VERSION: ${{ secrets.UBUNTU_VERSION }}
-        run: docker build --build-arg UBUNTU_VERSION=$UBUNTU_VERSION -t music_service:dev .
-  test:
-    needs: [build]
-    runs-on: ubuntu-latest
-    steps:
       - name: create docker network
         run: docker network create backend --driver bridge --gateway 10.123.0.1 --subnet 10.123.0.0/24
       - name: create docker volume
         run: |
           docker volume create file_server --driver local
           docker volume create mongo --driver local
+      - name: Build music_service image
+        env:
+          UBUNTU_VERSION: ${{ secrets.UBUNTU_VERSION }}
+        run: docker build --build-arg UBUNTU_VERSION=$UBUNTU_VERSION -t music_service:dev .
       - name: generate file_server container
         env:
           MINIO_ROOT_USER: ${{ secrets.MINIO_ROOT_USER }}
