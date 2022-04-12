@@ -1,4 +1,7 @@
 import uvicorn
+from rich.traceback import install
+
+install(show_locals=True)
 
 from app.common.config import settings
 from app.common.create_app import create_app
