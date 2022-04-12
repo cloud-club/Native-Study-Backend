@@ -61,3 +61,8 @@ jobs:
           -e MINIO_ROOT_PASSWORD=$MINIO_ROOT_PASSWORD \
           -p 80:8090 \
           music_service:dev
+      - name: run test
+        run: |
+          cd /workspace/tests
+          pytest -vv
+    # @TODO: docker image push into private registry
