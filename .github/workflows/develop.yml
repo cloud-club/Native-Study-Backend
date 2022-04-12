@@ -63,6 +63,5 @@ jobs:
           music_service:dev
       - name: run test
         run: |
-          cd /workspace/tests
-          pytest -vv
+          pytest /tests -vv
     # @TODO: docker image push into private registry
