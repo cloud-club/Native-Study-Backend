@@ -19,7 +19,6 @@ jobs:
           version: "1.29.2"
       - name: Build the Docker image
         run: docker-compose -f docker-compose.yaml -f docker-compose.dev.yaml build --parallel
-      - name: Tag Docker image
   test:
     runs-on: ${{ matrix.os }}
     steps:
