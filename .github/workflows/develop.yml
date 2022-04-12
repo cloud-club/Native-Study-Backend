@@ -63,5 +63,5 @@ jobs:
           music_service:dev
       - name: run test
         run: |
-          pytest /tests -vv
+          docker exec -it music_service bash -c "pytest /tests -vv"
     # @TODO: docker image push into private registry
