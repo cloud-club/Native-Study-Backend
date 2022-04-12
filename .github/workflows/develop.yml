@@ -1,0 +1,29 @@
+name: development build and deploy
+
+on:
+  push:
+    branches: [develop]
+  pull_request:
+    branches: [develop]
+
+jobs:
+  build:
+    strategy:
+      matrix:
+        os: [ubuntu-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v3
+      - uses: KengoTODA/actions-setup-docker-compose@main
+        with:
+          version: "1.29.2"
+      - name: Build the Docker image
+        run: docker-compose -f docker-compose.yaml -f docker-compose.dev.yaml build --parallel
+      - name: Tag Docker image
+  test:
+    runs-on: ${{ matrix.os }}
+    steps:
+      - name: generate docker container
+        run: docker-compose -f docker-compose.yaml -f docker-compose.dev.yaml up -d
+      - name: test
+        run: docker exec -it music_service basc -c "pytest ./tests"
