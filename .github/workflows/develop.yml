@@ -9,10 +9,7 @@ on:
 jobs:
   build:
     name: build
-    strategy:
-      matrix:
-        os: [ubuntu-latest]
-    runs-on: ${{ matrix.os }}
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
       - uses: KengoTODA/actions-setup-docker-compose@main
@@ -22,6 +19,7 @@ jobs:
         run: docker-compose -f docker-compose.yaml -f docker-compose.dev.yaml build --parallel
   test:
     needs: [build]
+    runs-on: ubuntu-latest
     steps:
       - name: generate docker container
         run: docker-compose -f docker-compose.yaml -f docker-compose.dev.yaml up -d
