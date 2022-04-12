@@ -61,6 +61,10 @@ jobs:
           -e MINIO_ROOT_PASSWORD=$MINIO_ROOT_PASSWORD \
           -p 80:8090 \
           music_service:dev
+      - name: check docker image
+        run: docker images
+      - name: check docker status
+        run: docker ps -a
       - name: check pytest
         run: docker exec music_service bash -c "pip3 list | grep pytest"
       - name: run test
