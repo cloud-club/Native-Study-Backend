@@ -15,7 +15,7 @@ jobs:
       - name: Build music_service image
         env:
           UBUNTU_VERSION: ${{ secrets.UBUNTU_VERSION }}
-        run: docker build --build-args UBUNTU_VERSION="$UBUNTU_VERSION" -t music_service:dev .
+        run: docker build --build-arg UBUNTU_VERSION="$UBUNTU_VERSION" -t music_service:dev .
   test:
     needs: [build]
     runs-on: ubuntu-latest
