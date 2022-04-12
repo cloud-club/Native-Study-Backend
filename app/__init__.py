@@ -9,3 +9,6 @@ mc = Minio(
     region=settings.MINIO_REGION,
     secure=False,
 )
+
+if "music" not in mc.list_buckets():
+    mc.make_bucket("music")
