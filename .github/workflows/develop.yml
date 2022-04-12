@@ -15,7 +15,7 @@ jobs:
       - name: Build music_service image
         env:
           UBUNTU_VERSION: ${{ secrets.UBUNTU_VERSION }}
-        run: docker build --build-arg UBUNTU_VERSION="$UBUNTU_VERSION" -t music_service:dev .
+        run: docker build --build-arg UBUNTU_VERSION=$UBUNTU_VERSION -t music_service:dev .
   test:
     needs: [build]
     runs-on: ubuntu-latest
@@ -31,12 +31,13 @@ jobs:
           MINIO_ROOT_USER: ${{ secrets.MINIO_ROOT_USER }}
           MINIO_ROOT_PASSWORD: ${{ secrets.MINIO_ROOT_PASSWORD }}
         run: |
-          docker run -d --name file_server -v file_server:/DATA \
+          docker run -d -v file_server:/DATA \
           -p 9000:9000 -p 9001:9001 \
-          -e MINIO_ROOT_USER="$MINIO_ROOT_USER" \
-          -e MINIO_ROOT_PASSWORD="$MINIO_ROOT_PASSWORD" \
+          -e MINIO_ROOT_USER=$MINIO_ROOT_USER \
+          -e MINIO_ROOT_PASSWORD=$MINIO_ROOT_PASSWORD \
           --network backend \
-          quay.io/minio/minio:quay.io/minio/minio:RELEASE.2022-04-09T15-09-52Z \
+          --name file_server \
+          quay.io/minio/minio:RELEASE.2022-04-09T15-09-52Z \
           server /DATA --console-address ":9001"
       - name: generate mongoDB container
         env:
@@ -46,8 +47,8 @@ jobs:
           docker run -d --name mongo -v mongo:/data/db \
           -p 27017:27017 \
           --network backend \
-          -e MONGO_INITDB_ROOT_USERNAME="$MONGO_INITDB_ROOT_USERNAME" \
-          -e MONGO_INITDB_ROOT_PASSWORD="$MONGO_INITDB_ROOT_PASSWORD" \
+          -e MONGO_INITDB_ROOT_USERNAME=$MONGO_INITDB_ROOT_USERNAME \
+          -e MONGO_INITDB_ROOT_PASSWORD=$MONGO_INITDB_ROOT_PASSWORD \
           mongo:5
       - name: generate music_service container
         env:
@@ -58,9 +59,9 @@ jobs:
         run: |
           docker run -d --name music_service  -v .:/workspace \
           --network backend \
-          -e MONGO_INITDB_ROOT_USERNAME="$MONGO_INITDB_ROOT_USERNAME" \
-          -e MONGO_INITDB_ROOT_PASSWORD="$MONGO_INITDB_ROOT_PASSWORD" \
-          -e MINIO_ROOT_USER="$MINIO_ROOT_USER" \
-          -e MINIO_ROOT_PASSWORD="$MINIO_ROOT_PASSWORD" \
+          -e MONGO_INITDB_ROOT_USERNAME=$MONGO_INITDB_ROOT_USERNAME \
+          -e MONGO_INITDB_ROOT_PASSWORD=$MONGO_INITDB_ROOT_PASSWORD \
+          -e MINIO_ROOT_USER=$MINIO_ROOT_USER \
+          -e MINIO_ROOT_PASSWORD=$MINIO_ROOT_PASSWORD \
           -p 80:8090 \
           music_service:dev
