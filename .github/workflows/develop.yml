@@ -67,6 +67,8 @@ jobs:
         run: |
           npm install
           npm install surge --global
+      - name: check env
+        run: cat .env
       - name: test docker compose
         run: docker-compose version
       - name: Build the Docker image
