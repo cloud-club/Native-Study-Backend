@@ -12,72 +12,42 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - uses: KengoTODA/actions-setup-docker-compose@main
-        with:
-          version: "1.29.2"
-      # Node 환경을 설정하여 npm 커맨드를 사용할 수 있도록 하는 Action을 불러옵니다.
-      # 여기에서는 14 버전을 사용하고 있습니다.
-      - uses: actions/setup-node@v2
-        with:
-          node-version: "14"
-      # Github Repository Secrets를 통해 환경 변수 파일을 생성합니다.
-      - name: Generate Environment Variables File
-        run: |
-          cat <<EOF > .env
-          UBUNTU_VERSION=$UBUNTU_VERSION
-          TIME_ZONE=$TIME_ZONE
-          DEVELOP_VERSION=$DEVELOP_VERSION
-          NETWORK_SUBNET=$NETWORK_SUBNET
-          MUSIC_SERVICE_HOST_NAME=$MUSIC_SERVICE_HOST_NAME
-          MUSIC_SERVICE_EXTERNAL_PORT=$MUSIC_SERVICE_EXTERNAL_PORT
-          MUSIC_SERVICE_INTERNAL_PORT=$MUSIC_SERVICE_INTERNAL_PORT
-          MINIO_HOST_NAME=$MINIO_HOST_NAME
-          MINIO_API_PORT=$MINIO_API_PORT
-          MINIO_DASHBOARD_PORT=$MINIO_DASHBOARD_PORT
-          MONGO_HOST_NAME=$MONGO_HOST_NAME
-          MONGO_PORT=$MONGO_PORT
-          DATABASE_NAME=$DATABASE_NAME
-          MONGO_INITDB_ROOT_USERNAME=$MONGO_INITDB_ROOT_USERNAME
-          MONGO_INITDB_ROOT_PASSWORD=$MONGO_INITDB_ROOT_PASSWORD
-          MINIO_ROOT_USER=$MINIO_ROOT_USER
-          MINIO_ROOT_PASSWORD=$MINIO_ROOT_PASSWORD
-          MINIO_REGION=$MINIO_REGION
-          MINIO_USE_TLS=$MINIO_USE_TLS
-        env:
-          UBUNTU_VERSION: ${{ secrets.UBUNTU_VERSION }}
-          TIME_ZONE: ${{ secrets.TIME_ZONE }}
-          NETWORK_SUBNET: ${{ secrets.NETWORK_SUBNET }}
-          MUSIC_SERVICE_HOST_NAME: ${{ secrets.MUSIC_SERVICE_HOST_NAME }}
-          MUSIC_SERVICE_EXTERNAL_PORT: ${{ secrets.MUSIC_SERVICE_EXTERNAL_PORT }}
-          MUSIC_SERVICE_INTERNAL_PORT: ${{ secrets.MUSIC_SERVICE_INTERNAL_PORT }}
-          MINIO_HOST_NAME: ${{ secrets.MINIO_HOST_NAME }}
-          MINIO_API_PORT: ${{ secrets.MINIO_API_PORT }}
-          MINIO_DASHBOARD_PORT: ${{ secrets.MINIO_DASHBOARD_PORT }}
-          MONGO_HOST_NAME: ${{ secrets.MONGO_HOST_NAME }}
-          MONGO_PORT: ${{ secrets.MONGO_PORT }}
-          DATABASE_NAME: ${{ secrets.DATABASE_NAME }}
-          MONGO_INITDB_ROOT_USERNAME: ${{ secrets.MONGO_INITDB_ROOT_USERNAME }}
-          MONGO_INITDB_ROOT_PASSWORD: ${{ secrets.MONGO_INITDB_ROOT_PASSWORD }}
-          MINIO_ROOT_USER: ${{ secrets.MINIO_ROOT_USER }}
-          MINIO_ROOT_PASSWORD: ${{ secrets.MINIO_ROOT_PASSWORD }}
-          MINIO_REGION: ${{ secrets.MINIO_REGION }}
-          MINIO_USE_TLS: ${{ secrets.MINIO_USE_TLS }}
-      # 해당 프로젝트에서 사용하는 모든 라이브러리와 Surge를 설치합니다.
-      - name: Install Dependencies and Surge
-        run: |
-          npm install
-          npm install surge --global
-      - name: check env
-        run: cat .env
-      - name: test docker compose
-        run: docker-compose version
-      - name: Build the Docker image
-        run: docker-compose -f docker-compose.yaml -f docker-compose.dev.yaml build --parallel
+      - name: Build music_service image
+        run: docker build --build-args UBUNTU_VERSION=${{ secrets.UBUNTU_VERSION }} -t music_service:dev .
   test:
     needs: [build]
     runs-on: ubuntu-latest
     steps:
-      - name: generate docker container
-        run: docker-compose -f docker-compose.yaml -f docker-compose.dev.yaml up -d
-      - name: test
-        run: docker exec -it music_service basc -c "pytest ./tests"
+      - name: create docker network
+        run: docker network create backend --driver bridge --gateway 10.123.0.1 --subnet 10.123.0.0/24
+      - name: create docker volume
+        run: |
+          docker volume create file_server --driver local
+          docker volume create mongo --driver local
+      - name: generate file_server container
+        run: |
+          docker run -d --name file_server -v file_server:/DATA \
+          -p 9000:9000 -p 9001:9001 \
+          -e MINIO_ROOT_USER=${{ secrets.MINIO_ROOT_USER }} \
+          -e MINIO_ROOT_PASSWORD=${{ secrets.MINIO_ROOT_PASSWORD }} \
+          --network backend \
+          quay.io/minio/minio:quay.io/minio/minio:RELEASE.2022-04-09T15-09-52Z \
+          server /DATA --console-address ":9001"
+      - name: generate mongoDB container
+        run: |
+          docker run -d --name mongo -v mongo:/data/db \
+          -p 27017:27017 \
+          --network backend \
+          -e MONGO_INITDB_ROOT_USERNAME=${{ secrets.MONGO_INITDB_ROOT_USERNAME }} \
+          -e MONGO_INITDB_ROOT_PASSWORD=4{{ secrets.MONGO_INITDB_ROOT_PASSWORD }} \
+          mongo:5
+      - name: generate music_service container
+        run: |
+          docker run -d --name music_service  -v .:/workspace \
+          --network backend \
+          -e MONGO_INITDB_ROOT_USERNAME=${{ secrets.MONGO_INITDB_ROOT_USERNAME }} \
+          -e MONGO_INITDB_ROOT_PASSWORD=${{ secrets.MONGO_INITDB_ROOT_PASSWORD }} \
+          -e MINIO_ROOT_USER=${{ secrets.MINIO_ROOT_USER }} \
+          -e MINIO_ROOT_PASSWORD=${{ secrets.MINIO_ROOT_PASSWORD }} \
+          -p 80:8090 \
+          music_service:dev
