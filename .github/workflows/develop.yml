@@ -13,7 +13,9 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - name: Build music_service image
-        run: docker build --build-args UBUNTU_VERSION=${{ secrets.UBUNTU_VERSION }} -t music_service:dev .
+        env:
+          UBUNTU_VERSION: ${{ secrets.UBUNTU_VERSION }}
+        run: docker build --build-args UBUNTU_VERSION=$UBUNTU_VERSION -t music_service:dev .
   test:
     needs: [build]
     runs-on: ubuntu-latest
@@ -38,8 +40,8 @@ jobs:
           server /DATA --console-address ":9001"
       - name: generate mongoDB container
         env:
-          MONGO_INITDB_ROOT_USERNAME=${{ secrets.MONGO_INITDB_ROOT_USERNAME }}
-          MONGO_INITDB_ROOT_PASSWORD=${{ secrets.MONGO_INITDB_ROOT_PASSWORD }}
+          MONGO_INITDB_ROOT_USERNAME: ${{ secrets.MONGO_INITDB_ROOT_USERNAME }}
+          MONGO_INITDB_ROOT_PASSWORD: ${{ secrets.MONGO_INITDB_ROOT_PASSWORD }}
         run: |
           docker run -d --name mongo -v mongo:/data/db \
           -p 27017:27017 \
