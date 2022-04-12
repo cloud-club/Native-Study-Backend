@@ -15,6 +15,58 @@ jobs:
       - uses: KengoTODA/actions-setup-docker-compose@main
         with:
           version: "1.29.2"
+      # Node 환경을 설정하여 npm 커맨드를 사용할 수 있도록 하는 Action을 불러옵니다.
+      # 여기에서는 14 버전을 사용하고 있습니다.
+      - uses: actions/setup-node@v2
+        with:
+          node-version: "14"
+      # Github Repository Secrets를 통해 환경 변수 파일을 생성합니다.
+      - name: Generate Environment Variables File
+        run: |
+          cat <<EOF > .env
+          UBUNTU_VERSION=$UBUNTU_VERSION
+          TIME_ZONE=$TIME_ZONE
+          DEVELOP_VERSION=$DEVELOP_VERSION
+          NETWORK_SUBNET=$NETWORK_SUBNET
+          MUSIC_SERVICE_HOST_NAME=$MUSIC_SERVICE_HOST_NAME
+          MUSIC_SERVICE_EXTERNAL_PORT=$MUSIC_SERVICE_EXTERNAL_PORT
+          MUSIC_SERVICE_INTERNAL_PORT=$MUSIC_SERVICE_INTERNAL_PORT
+          MINIO_HOST_NAME=$MINIO_HOST_NAME
+          MINIO_API_PORT=$MINIO_API_PORT
+          MINIO_DASHBOARD_PORT=$MINIO_DASHBOARD_PORT
+          MONGO_HOST_NAME=$MONGO_HOST_NAME
+          MONGO_PORT=$MONGO_PORT
+          DATABASE_NAME=$DATABASE_NAME
+          MONGO_INITDB_ROOT_USERNAME=$MONGO_INITDB_ROOT_USERNAME
+          MONGO_INITDB_ROOT_PASSWORD=$MONGO_INITDB_ROOT_PASSWORD
+          MINIO_ROOT_USER=$MINIO_ROOT_USER
+          MINIO_ROOT_PASSWORD=$MINIO_ROOT_PASSWORD
+          MINIO_REGION=$MINIO_REGION
+          MINIO_USE_TLS=$MINIO_USE_TLS
+        env:
+          UBUNTU_VERSION: ${{ secrets.UBUNTU_VERSION }}
+          TIME_ZONE: ${{ secrets.TIME_ZONE }}
+          NETWORK_SUBNET: ${{ secrets.NETWORK_SUBNET }}
+          MUSIC_SERVICE_HOST_NAME: ${{ secrets.MUSIC_SERVICE_HOST_NAME }}
+          MUSIC_SERVICE_EXTERNAL_PORT: ${{ secrets.MUSIC_SERVICE_EXTERNAL_PORT }}
+          MUSIC_SERVICE_INTERNAL_PORT: ${{ secrets.MUSIC_SERVICE_INTERNAL_PORT }}
+          MINIO_HOST_NAME: ${{ secrets.MINIO_HOST_NAME }}
+          MINIO_API_PORT: ${{ secrets.MINIO_API_PORT }}
+          MINIO_DASHBOARD_PORT: ${{ secrets.MINIO_DASHBOARD_PORT }}
+          MONGO_HOST_NAME: ${{ secrets.MONGO_HOST_NAME }}
+          MONGO_PORT: ${{ secrets.MONGO_PORT }}
+          DATABASE_NAME: ${{ secrets.DATABASE_NAME }}
+          MONGO_INITDB_ROOT_USERNAME: ${{ secrets.MONGO_INITDB_ROOT_USERNAME }}
+          MONGO_INITDB_ROOT_PASSWORD: ${{ secrets.MONGO_INITDB_ROOT_PASSWORD }}
+          MINIO_ROOT_USER: ${{ secrets.MINIO_ROOT_USER }}
+          MINIO_ROOT_PASSWORD: ${{ secrets.MINIO_ROOT_PASSWORD }}
+          MINIO_REGION: ${{ secrets.MINIO_REGION }}
+          MINIO_USE_TLS: ${{ secrets.MINIO_USE_TLS }}
+      # 해당 프로젝트에서 사용하는 모든 라이브러리와 Surge를 설치합니다.
+      - name: Install Dependencies and Surge
+        run: |
+          npm install
+          npm install surge --global
       - name: test docker compose
         run: docker-compose version
       - name: Build the Docker image
