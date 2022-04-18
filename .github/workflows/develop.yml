@@ -11,6 +11,11 @@ jobs:
     name: clean docker volume and network
     runs-on: self-hosted
     steps:
+      - name: remove running container
+        run: |
+          docker rm -f music_service
+          docker rm -f file_server
+          docker rm -f mongo
       - name: remove docker volume
         run: |
           docker volume rm -f file_server
@@ -18,11 +23,6 @@ jobs:
       - name: remove docker network
         run: |
           docker network prune -f
-      - name: remove running container
-        run: |
-          docker rm -f music_service
-          docker rm -f file_server
-          docker rm -f mongo
   build:
     name: build
     runs-on: self-hosted
