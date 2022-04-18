@@ -13,7 +13,9 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - name: create docker network
-        run: docker network create backend --driver bridge --gateway 10.123.0.1 --subnet 10.123.0.0/24
+        env:
+          BUILD_VERSION: ${{ github.run_number }}
+        run: docker network create backend --driver bridge --gateway 10.123.$BUILD_VERSION.1 --subnet 10.123.$BUILD_VERSION.0/24
       - name: create docker volume
         run: |
           docker volume create file_server --driver local
