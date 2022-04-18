@@ -61,4 +61,11 @@ jobs:
           -e MINIO_ROOT_PASSWORD=$MINIO_ROOT_PASSWORD \
           -p 80:8090 \
           music_service:dev
-    # @TODO: docker image push into private registry
+      # @TODO: docker image push into private registry
+      - name: harbor login
+        env:
+          HARBOR_HOST_NAME: ${{ secrets.HARBOR_HOST_NAME }}
+          HORBOR_USER: ${{ secrets.HORBOR_USER }}
+          HARBOR_USER_PASSWORD: ${{ secrets.HARBOR_USER_PASSWORD }}
+        run: |
+          echo $HARBOR_HOST_NAME |  docker login $HORBOR_USER -u $HORBOR_USER --password-stdin
