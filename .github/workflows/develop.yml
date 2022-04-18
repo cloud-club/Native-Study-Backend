@@ -18,6 +18,11 @@ jobs:
       - name: remove docker network
         run: |
           docker network prune -f
+      - name: remove running container
+        run: |
+          docker rm -f music_service
+          docker rm -f file_server
+          docker rm -f mongo
   build:
     name: build
     runs-on: self-hosted
@@ -82,4 +87,4 @@ jobs:
           HORBOR_USER: ${{ secrets.HORBOR_USER }}
           HARBOR_USER_PASSWORD: ${{ secrets.HARBOR_USER_PASSWORD }}
         run: |
-          echo $HARBOR_HOST_NAME |  docker login $HORBOR_USER -u $HORBOR_USER --password-stdin
+          echo $HARBOR_HOST_NAME |  docker login $HARBOR_HOST_NAME -u $HORBOR_USER --password-stdin
