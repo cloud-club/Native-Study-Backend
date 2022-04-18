@@ -13,11 +13,11 @@ jobs:
     steps:
       - name: remove docker volume
         run: |
-          docker volume rm file_server
-          docker volume rm mongo
+          docker volume rm -f file_server
+          docker volume rm -f mongo
       - name: remove docker network
         run: |
-          docker network rm backend
+          docker network rm -f backend
   build:
     name: build
     runs-on: self-hosted
