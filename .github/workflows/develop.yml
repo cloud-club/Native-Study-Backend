@@ -87,4 +87,4 @@ jobs:
           HORBOR_USER: ${{ secrets.HORBOR_USER }}
           HARBOR_USER_PASSWORD: ${{ secrets.HARBOR_USER_PASSWORD }}
         run: |
-          echo $HARBOR_HOST_NAME |  docker login $HARBOR_HOST_NAME -u $HORBOR_USER --password-stdin
+          echo $HARBOR_USER_PASSWORD |  docker login $HARBOR_HOST_NAME -u $HORBOR_USER --password-stdin
