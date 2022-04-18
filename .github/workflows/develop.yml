@@ -7,6 +7,17 @@ on:
     branches: [develop]
 
 jobs:
+  clean:
+    name: clean docker volume and network
+    runs-on: self-hosted
+    steps:
+      - name: remove docker volume
+        run: |
+          docker volume rm file_server
+          docker volume rm mongo
+      - name: remove docker network
+        run: |
+          docker network rm backend
   build:
     name: build
     runs-on: self-hosted
