@@ -17,7 +17,7 @@ jobs:
           docker volume rm -f mongo
       - name: remove docker network
         run: |
-          docker network rm -f backend
+          docker network rm backend 2>&1 /dev/null
   build:
     name: build
     runs-on: self-hosted
