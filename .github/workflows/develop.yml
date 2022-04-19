@@ -46,7 +46,7 @@ jobs:
         run: |
           docker volume create file_server --driver local
           docker volume create mongo --driver local
-      - name: test layer
+      - name: generate .env
         run: |
           touch env
           cat > .env <<EOF
