@@ -72,6 +72,7 @@ jobs:
         run: |
           docker run -d --name music_service -v $(pwd):/workspace \
           --network backend \
+          --mount type=bind,source=env,target=/workspace/env \
           -e MONGO_INITDB_ROOT_USERNAME=$MONGO_INITDB_ROOT_USERNAME \
           -e MONGO_INITDB_ROOT_PASSWORD=$MONGO_INITDB_ROOT_PASSWORD \
           -e MINIO_ROOT_USER=$MINIO_ROOT_USER \
