@@ -41,15 +41,15 @@ jobs:
         env:
           UBUNTU_VERSION: ${{ secrets.UBUNTU_VERSION }}
         run: docker build --build-arg UBUNTU_VERSION=$UBUNTU_VERSION -t music_service:dev .
-      - name: generate .env
+      - name: generate env
         env:
           MINIO_ROOT_USER: ${{ secrets.MINIO_ROOT_USER }}
           MINIO_ROOT_PASSWORD: ${{ secrets.MINIO_ROOT_PASSWORD }}
           MONGO_INITDB_ROOT_USERNAME: ${{ secrets.MONGO_INITDB_ROOT_USERNAME }}
           MONGO_INITDB_ROOT_PASSWORD: ${{ secrets.MONGO_INITDB_ROOT_PASSWORD }}
         run: |
-          mv .env.example .env
-          cat > .env <<EOF
+          mv .env.example env
+          cat > env <<EOF
           # Base Env
           APP_ENV=production
 
@@ -101,7 +101,7 @@ jobs:
           MONGO_INITDB_ROOT_PASSWORD: ${{ secrets.MONGO_INITDB_ROOT_PASSWORD }}
         run: |
           docker run -d --name music_service -v $(pwd):/workspace \
-          -v .env:/workspace/.env \
+          -v env:/workspace/.env \
           --network backend \
           -e MONGO_INITDB_ROOT_USERNAME=$MONGO_INITDB_ROOT_USERNAME \
           -e MONGO_INITDB_ROOT_PASSWORD=$MONGO_INITDB_ROOT_PASSWORD \
@@ -109,9 +109,9 @@ jobs:
           -e MINIO_ROOT_PASSWORD=$MINIO_ROOT_PASSWORD \
           -p 8090:8090 \
           music_service:dev
-      - name: copy .env and commit container
+      - name: copy env and commit container
         run: |
-          docker cp .env music_service:/workspace/.env
+          docker cp env music_service:/workspace/.env
           docker commit music_service music_service:dev
       - name: harbor login
         env:
