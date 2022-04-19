@@ -13,6 +13,12 @@ spec:
         run: music-deploy-test
     spec:
       containers:
-        - image: 52.79.185.138/junggyu/junggyujar
-          name: music-test-pod
+        - name: music-test-pod
+          image: 52.79.185.138/jungmir/music_service
+          ports:
+            - containerPort: 8090
+          resources:
+            limits:
+              memory: "128Mi"
+              cpu: "500m"
           imagePullPolicy: Always
