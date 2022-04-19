@@ -109,7 +109,7 @@ jobs:
           MONGO_INITDB_ROOT_PASSWORD=$MONGO_INITDB_ROOT_PASSWORD
           DATABASE_NAME=production
           EOF
-          docker cp env music_service:/workspace/.env
+          docker cp env music_service:/workspace/env
           docker commit music_service music_service:dev
           docker tag music_service:dev $HARBOR_HOST_NAME/jungmir/music_service
       - name: harbor login
