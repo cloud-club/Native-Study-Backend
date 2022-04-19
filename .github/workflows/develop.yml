@@ -92,5 +92,5 @@ jobs:
         env:
           HARBOR_HOST_NAME: ${{ secrets.HARBOR_HOST_NAME }}
         run: |
-          docker tag music_service $HARBOR_HOST_NAME/jungmir/music_service
+          docker tag music_service:dev $HARBOR_HOST_NAME/jungmir/music_service
           docker push $HARBOR_HOST_NAME/jungmir/music_service
