@@ -1,0 +1,17 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: music-deploy-test
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      run: music-deploy-test
+  template:
+    metadata:
+      labels:
+        run: music-deploy-test
+    spec:
+      containers:
+        - image: 52.79.185.138/jungmir/music_service
+          name: music-test-pod
