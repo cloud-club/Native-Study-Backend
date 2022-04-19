@@ -78,7 +78,7 @@ jobs:
           -e MONGO_INITDB_ROOT_PASSWORD=$MONGO_INITDB_ROOT_PASSWORD \
           -e MINIO_ROOT_USER=$MINIO_ROOT_USER \
           -e MINIO_ROOT_PASSWORD=$MINIO_ROOT_PASSWORD \
-          -p 80:8090 \
+          -p 8090:8090 \
           music_service:dev
       # @TODO: docker image push into private registry
       - name: harbor login
