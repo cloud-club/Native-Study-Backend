@@ -4,6 +4,8 @@
 # config file
 .pre-commit-config.yaml
 docker-compose*.yaml
+Dockerfile
+Jenkinsfile
 
 # resource file
 *.md

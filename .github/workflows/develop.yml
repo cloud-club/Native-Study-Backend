@@ -101,6 +101,7 @@ jobs:
           MONGO_INITDB_ROOT_PASSWORD: ${{ secrets.MONGO_INITDB_ROOT_PASSWORD }}
         run: |
           docker run -d --name music_service -v $(pwd):/workspace \
+          -v .env:/workspace/.env \
           --network backend \
           -e MONGO_INITDB_ROOT_USERNAME=$MONGO_INITDB_ROOT_USERNAME \
           -e MONGO_INITDB_ROOT_PASSWORD=$MONGO_INITDB_ROOT_PASSWORD \
@@ -111,7 +112,7 @@ jobs:
       - name: copy .env and commit container
         run: |
           docker cp .env music_service:/workspace/.env
-          docker commit -a jungmir music_service music_service:dev
+          docker commit music_service music_service:dev
       - name: harbor login
         env:
           HARBOR_HOST_NAME: ${{ secrets.HARBOR_HOST_NAME }}
