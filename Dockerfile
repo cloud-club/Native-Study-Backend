@@ -23,6 +23,8 @@ RUN mkdir /workspace
 WORKDIR /workspace
 COPY . .
 
+RUN echo $ls -al)
+
 RUN poetry install
 
 # ENTRYPOINT [ "python3", "main.py" ]
