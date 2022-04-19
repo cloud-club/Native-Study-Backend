@@ -6,6 +6,13 @@ on:
   pull_request:
     branches: [develop]
 
+env:
+  MINIO_ROOT_USER: ${{ secrets.MINIO_ROOT_USER }}
+  MINIO_ROOT_PASSWORD: ${{ secrets.MINIO_ROOT_PASSWORD }}
+  MONGO_INITDB_ROOT_USERNAME: ${{ secrets.MONGO_INITDB_ROOT_USERNAME }}
+  MONGO_INITDB_ROOT_PASSWORD: ${{ secrets.MONGO_INITDB_ROOT_PASSWORD }}
+  HARBOR_HOST_NAME: ${{ secrets.HARBOR_HOST_NAME }}
+
 jobs:
   clean:
     name: clean docker volume and network
@@ -42,9 +49,6 @@ jobs:
           UBUNTU_VERSION: ${{ secrets.UBUNTU_VERSION }}
         run: docker build --build-arg UBUNTU_VERSION=$UBUNTU_VERSION -t music_service:dev .
       - name: generate file_server container
-        env:
-          MINIO_ROOT_USER: ${{ secrets.MINIO_ROOT_USER }}
-          MINIO_ROOT_PASSWORD: ${{ secrets.MINIO_ROOT_PASSWORD }}
         run: |
           docker run -d -v file_server:/DATA \
           -p 9000:9000 -p 9001:9001 \
@@ -55,9 +59,6 @@ jobs:
           quay.io/minio/minio:RELEASE.2022-04-09T15-09-52Z \
           server /DATA --console-address ":9001"
       - name: generate mongoDB container
-        env:
-          MONGO_INITDB_ROOT_USERNAME: ${{ secrets.MONGO_INITDB_ROOT_USERNAME }}
-          MONGO_INITDB_ROOT_PASSWORD: ${{ secrets.MONGO_INITDB_ROOT_PASSWORD }}
         run: |
           docker run -d --name mongo -v mongo:/data/db \
           -p 27017:27017 \
@@ -66,13 +67,9 @@ jobs:
           -e MONGO_INITDB_ROOT_PASSWORD=$MONGO_INITDB_ROOT_PASSWORD \
           mongo:5
       - name: generate music_service container
-        env:
-          MINIO_ROOT_USER: ${{ secrets.MINIO_ROOT_USER }}
-          MINIO_ROOT_PASSWORD: ${{ secrets.MINIO_ROOT_PASSWORD }}
-          MONGO_INITDB_ROOT_USERNAME: ${{ secrets.MONGO_INITDB_ROOT_USERNAME }}
-          MONGO_INITDB_ROOT_PASSWORD: ${{ secrets.MONGO_INITDB_ROOT_PASSWORD }}
         run: |
           docker run -d --name music_service -v $(pwd):/workspace \
+          -v env:/workspace/env \
           --network backend \
           -e MONGO_INITDB_ROOT_USERNAME=$MONGO_INITDB_ROOT_USERNAME \
           -e MONGO_INITDB_ROOT_PASSWORD=$MONGO_INITDB_ROOT_PASSWORD \
@@ -81,12 +78,6 @@ jobs:
           -p 8090:8090 \
           music_service:dev
       - name: generate env and commit container and tagging
-        env:
-          HARBOR_HOST_NAME: ${{ secrets.HARBOR_HOST_NAME }}
-          MINIO_ROOT_USER: ${{ secrets.MINIO_ROOT_USER }}
-          MINIO_ROOT_PASSWORD: ${{ secrets.MINIO_ROOT_PASSWORD }}
-          MONGO_INITDB_ROOT_USERNAME: ${{ secrets.MONGO_INITDB_ROOT_USERNAME }}
-          MONGO_INITDB_ROOT_PASSWORD: ${{ secrets.MONGO_INITDB_ROOT_PASSWORD }}
         run: |
           mv .env.example env
           cat > env <<EOF
@@ -113,14 +104,8 @@ jobs:
           docker commit music_service music_service:dev
           docker tag music_service:dev $HARBOR_HOST_NAME/jungmir/music_service
       - name: harbor login
-        env:
-          HARBOR_HOST_NAME: ${{ secrets.HARBOR_HOST_NAME }}
-          HORBOR_USER: ${{ secrets.HORBOR_USER }}
-          HARBOR_USER_PASSWORD: ${{ secrets.HARBOR_USER_PASSWORD }}
         run: |
           echo $HARBOR_USER_PASSWORD |  docker login https://$HARBOR_HOST_NAME -u $HORBOR_USER --password-stdin
       - name: push into harbor
-        env:
-          HARBOR_HOST_NAME: ${{ secrets.HARBOR_HOST_NAME }}
         run: |
           docker push $HARBOR_HOST_NAME/jungmir/music_service
