@@ -49,7 +49,7 @@ jobs:
       - name: test layer
         run: |
           touch env
-          cat > env <<EOF
+          cat > .env <<EOF
           # Base Env
           APP_ENV=production
 
@@ -101,35 +101,10 @@ jobs:
           -e MINIO_ROOT_PASSWORD=$MINIO_ROOT_PASSWORD \
           -p 8090:8090 \
           music_service:dev
-      - name: generate env and commit container and tagging
-        run: |
-          touch env
-          cat > env <<EOF
-          # Base Env
-          APP_ENV=production
-
-          # minIO
-          MINIO_HOST_NAME=file_server
-          MINIO_API_PORT=9000
-          MINIO_ROOT_USER=$MINIO_ROOT_USER
-          MINIO_ROOT_PASSWORD=$MINIO_ROOT_PASSWORD
-
-          # music service
-          MUSIC_SERVICE_INTERNAL_PORT=8090
-
-          # mongoDB
-          MONGO_HOST_NAME=mongo
-          MONGO_PORT=27017
-          MONGO_INITDB_ROOT_USERNAME=$MONGO_INITDB_ROOT_USERNAME
-          MONGO_INITDB_ROOT_PASSWORD=$MONGO_INITDB_ROOT_PASSWORD
-          DATABASE_NAME=production
-          EOF
-          docker cp env music_service:/workspace/env
-          docker commit music_service music_service:dev
-          docker tag music_service:dev $HARBOR_HOST_NAME/jungmir/music_service
       - name: harbor login
         run: |
           echo $HARBOR_USER_PASSWORD |  docker login https://$HARBOR_HOST_NAME -u $HORBOR_USER --password-stdin
-      - name: push into harbor
+      - name: tagging and push into harbor
         run: |
+          docker tag music_service:dev $HARBOR_HOST_NAME/jungmir/music_service
           docker push $HARBOR_HOST_NAME/jungmir/music_service
