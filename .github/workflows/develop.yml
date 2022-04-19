@@ -101,7 +101,6 @@ jobs:
           MONGO_INITDB_ROOT_PASSWORD: ${{ secrets.MONGO_INITDB_ROOT_PASSWORD }}
         run: |
           docker run -d --name music_service -v $(pwd):/workspace \
-          -v env:/workspace/.env \
           --network backend \
           -e MONGO_INITDB_ROOT_USERNAME=$MONGO_INITDB_ROOT_USERNAME \
           -e MONGO_INITDB_ROOT_PASSWORD=$MONGO_INITDB_ROOT_PASSWORD \
@@ -109,10 +108,11 @@ jobs:
           -e MINIO_ROOT_PASSWORD=$MINIO_ROOT_PASSWORD \
           -p 8090:8090 \
           music_service:dev
-      - name: copy env and commit container
+      - name: copy env and commit container and tagging
         run: |
           docker cp env music_service:/workspace/.env
           docker commit music_service music_service:dev
+          docker tag music_service:dev $HARBOR_HOST_NAME/jungmir/music_service
       - name: harbor login
         env:
           HARBOR_HOST_NAME: ${{ secrets.HARBOR_HOST_NAME }}
@@ -120,9 +120,8 @@ jobs:
           HARBOR_USER_PASSWORD: ${{ secrets.HARBOR_USER_PASSWORD }}
         run: |
           echo $HARBOR_USER_PASSWORD |  docker login https://$HARBOR_HOST_NAME -u $HORBOR_USER --password-stdin
-      - name: tagging docker image and push into harbor
+      - name: push into harbor
         env:
           HARBOR_HOST_NAME: ${{ secrets.HARBOR_HOST_NAME }}
         run: |
-          docker tag music_service:dev $HARBOR_HOST_NAME/jungmir/music_service
           docker push $HARBOR_HOST_NAME/jungmir/music_service
