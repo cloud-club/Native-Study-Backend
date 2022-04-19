@@ -79,7 +79,7 @@ jobs:
           music_service:dev
       - name: generate env and commit container and tagging
         run: |
-          mv .env.example env
+          touch env
           cat > env <<EOF
           # Base Env
           APP_ENV=production
