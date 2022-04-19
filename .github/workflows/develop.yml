@@ -109,6 +109,8 @@ jobs:
           -p 8090:8090 \
           music_service:dev
       - name: copy env and commit container and tagging
+        env:
+          HARBOR_HOST_NAME: ${{ secrets.HARBOR_HOST_NAME }}
         run: |
           docker cp env music_service:/workspace/.env
           docker commit music_service music_service:dev
