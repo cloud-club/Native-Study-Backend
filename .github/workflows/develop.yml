@@ -69,7 +69,6 @@ jobs:
       - name: generate music_service container
         run: |
           docker run -d --name music_service -v $(pwd):/workspace \
-          -v env:/workspace/env \
           --network backend \
           -e MONGO_INITDB_ROOT_USERNAME=$MONGO_INITDB_ROOT_USERNAME \
           -e MONGO_INITDB_ROOT_PASSWORD=$MONGO_INITDB_ROOT_PASSWORD \
