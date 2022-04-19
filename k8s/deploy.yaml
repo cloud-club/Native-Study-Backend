@@ -13,6 +13,6 @@ spec:
         run: music-deploy-test
     spec:
       containers:
-        - image: 52.79.185.138/junggyu/junggyujar
+        - image: docker pull 52.79.185.138/junggyu/junggyujar
           name: music-test-pod
           imagePullPolicy: Always
