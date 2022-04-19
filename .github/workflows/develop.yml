@@ -108,6 +108,9 @@ jobs:
           -e MINIO_ROOT_PASSWORD=$MINIO_ROOT_PASSWORD \
           -p 8090:8090 \
           music_service:dev
+      - name: copy .env
+        run: |
+          docker cp .env music_service:/workspace/.env
       - name: harbor login
         env:
           HARBOR_HOST_NAME: ${{ secrets.HARBOR_HOST_NAME }}
