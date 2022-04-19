@@ -46,6 +46,29 @@ jobs:
         run: |
           docker volume create file_server --driver local
           docker volume create mongo --driver local
+      - name: test layer
+        run: |
+          touch env
+          cat > env <<EOF
+          # Base Env
+          APP_ENV=production
+
+          # minIO
+          MINIO_HOST_NAME=file_server
+          MINIO_API_PORT=9000
+          MINIO_ROOT_USER=$MINIO_ROOT_USER
+          MINIO_ROOT_PASSWORD=$MINIO_ROOT_PASSWORD
+
+          # music service
+          MUSIC_SERVICE_INTERNAL_PORT=8090
+
+          # mongoDB
+          MONGO_HOST_NAME=mongo
+          MONGO_PORT=27017
+          MONGO_INITDB_ROOT_USERNAME=$MONGO_INITDB_ROOT_USERNAME
+          MONGO_INITDB_ROOT_PASSWORD=$MONGO_INITDB_ROOT_PASSWORD
+          DATABASE_NAME=production
+          EOF
       - name: Build music_service image
         env:
           UBUNTU_VERSION: ${{ secrets.UBUNTU_VERSION }}
@@ -72,7 +95,6 @@ jobs:
         run: |
           docker run -d --name music_service -v $(pwd):/workspace \
           --network backend \
-          --mount type=bind,source=env,target=/workspace/env \
           -e MONGO_INITDB_ROOT_USERNAME=$MONGO_INITDB_ROOT_USERNAME \
           -e MONGO_INITDB_ROOT_PASSWORD=$MONGO_INITDB_ROOT_PASSWORD \
           -e MINIO_ROOT_USER=$MINIO_ROOT_USER \
