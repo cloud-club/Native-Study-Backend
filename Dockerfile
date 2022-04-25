@@ -2,10 +2,11 @@ ARG UBUNTU_VERSION
 
 FROM ubuntu:${UBUNTU_VERSION}
 
-ENV LANG=C.UTF-8
-ENV LC_ALL=C.UTF-8
-ENV TZ=Asian/Seoul
-ENV PYTHONPATH=$PATH:/workspace
+ENV LANG=C.UTF-8 \
+    LC_ALL=C.UTF-8 \
+    TZ=Asian/Seoul \
+    PYTHONPATH=$PATH:/workspace \
+    PYTHONDONTWRITEBYTECODE=1
 
 RUN apt-get -qq update
 RUN DEBIAN_FRONTEND=noninteractive apt-get -qq -y install python3-pip \
