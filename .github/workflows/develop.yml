@@ -48,7 +48,7 @@ jobs:
           docker volume create mongo --driver local
       - name: generate .env
         run: |
-          touch env
+          touch .env
           cat > .env <<EOF
           # Base Env
           APP_ENV=production
