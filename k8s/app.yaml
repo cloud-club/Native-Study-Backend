@@ -31,7 +31,7 @@ metadata:
 spec:
   type: NodePort
   selector:
-    run: api-server-svc
+    run: music-service-server
   ports:
     - port: 8090
       targetPort: 8090
