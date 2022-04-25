@@ -5,7 +5,7 @@ from bson.objectid import ObjectId
 from fastapi import APIRouter, Query, status
 from fastapi.responses import StreamingResponse
 
-from app import inspect, mc
+from app import file_server, inspect
 from app.common.type import t
 from app.database.connect import get_db
 from app.schema.response import music as music_resp
@@ -47,6 +47,9 @@ async def stream_music(
     # init db
     db = get_db()
 
+    # init minio
+    storage = file_server.connect()
+
     musicDB = db.music
     music_data = musicDB.find_one(music_filter)
 
@@ -54,6 +57,6 @@ async def stream_music(
     fileDB = db.file
     file_data = fileDB.find_one(dict(_id=file_id))
 
-    response = mc.get_object("music", file_data["name"])
+    response = storage.get_object("music", file_data["name"])
 
     return StreamingResponse(content=load_wav_stream(response))

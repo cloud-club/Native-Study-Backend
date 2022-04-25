@@ -37,27 +37,21 @@ class AudioFile:
         length = metadata.length
         sample_rate = metadata.sample_rate
         channels = metadata.channels
-        return dict(
-            length=length,
-            rate=sample_rate,
-            channels=channels,
-            size=self.size,
-        )
+        return dict(length=length, rate=sample_rate, channels=channels, size=self.size,)
 
     def _parse_wav_metadata(self) -> t.Dict:
         metadata = self._file.info
         length = metadata.length
         sample_rate = metadata.sample_rate
         channels = metadata.channels
-        return dict(
-            length=length,
-            rate=sample_rate,
-            channels=channels,
-            size=self.size,
-        )
+        return dict(length=length, rate=sample_rate, channels=channels, size=self.size,)
 
     async def save(self, filename: str, bucket_name: str = "music") -> str:
-        result = storage.save(
+        # connect storage
+        session = storage.connect()
+
+        # save
+        result = session.save(
             bucket_name=bucket_name,
             object_name=filename,
             binary=self.binary,
