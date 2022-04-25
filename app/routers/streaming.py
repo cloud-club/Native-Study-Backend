@@ -29,7 +29,7 @@ async def load_wav_stream(binary: bytes) -> t.Generator:
 
 
 @router.get(
-    "/",
+    "",
     responses={
         200: {"model": music_resp.StreamMusicResponse, "description": "요청한 음악을 스트리밍"},
     },
