@@ -1,19 +1,19 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: music-deploy-test
+  name: music-service-server
 spec:
   replicas: 1
   selector:
     matchLabels:
-      run: music-deploy-test
+      run: music-service-server
   template:
     metadata:
       labels:
-        run: music-deploy-test
+        run: music-service-server
     spec:
       containers:
-        - name: music-test-pod
+        - name: music-service-api-server
           image: 52.79.185.138/jungmir/music_service
           ports:
             - containerPort: 8090
@@ -22,3 +22,17 @@ spec:
               memory: "128Mi"
               cpu: "500m"
           imagePullPolicy: Always
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: api-server-svc
+spec:
+  type: NodePort
+  selector:
+    run: api-server-svc
+  ports:
+    - port: 8090
+      targetPort: 8090
+      nodePort: 30007
