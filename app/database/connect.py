@@ -1,6 +1,7 @@
 from pymongo import MongoClient, mongo_client
 
 from app.common.config import settings
+from app.common.type import t
 
 
 class NoSQL:
@@ -20,18 +21,19 @@ class NoSQL:
 
 
 class Mongo(NoSQL):
-    _client: mongo_client.MongoClient
+    _client: t.Optional[mongo_client.MongoClient] = None
 
     def __init__(self, host: str, port: int, username: str, password: str) -> None:
         super().__init__(host=host, port=port, username=username, password=password)
 
     def connect(self) -> mongo_client.MongoClient:
-        self._client = MongoClient(
-            host=self.host,
-            port=self.port,
-            username=self.username,
-            password=self.password,
-        )
+        if self._client is None:
+            self._client = MongoClient(
+                host=self.host,
+                port=self.port,
+                username=self.username,
+                password=self.password,
+            )
         return self._client
 
 
@@ -40,5 +42,9 @@ db = Mongo(
     port=settings.MONGO_PORT,
     username=settings.MONGO_INITDB_ROOT_USERNAME,
     password=settings.MONGO_INITDB_ROOT_PASSWORD,
-).connect()
-db = db[settings.DATABASE_NAME]
+)
+
+
+def get_db():
+    session = db.connect()
+    return session[settings.DATABASE_NAME]

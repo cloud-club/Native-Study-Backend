@@ -6,7 +6,7 @@ from fastapi import APIRouter, File, Form, Query, UploadFile, status
 from fastapi.encoders import jsonable_encoder
 from fastapi.responses import JSONResponse
 
-from app.database.connect import db
+from app.database.connect import get_db
 from app.schema.entity.file import AudioFile
 from app.schema.entity.music import Music, MusicFile, MusicInDB
 from app.schema.response import music as music_resp
@@ -64,11 +64,11 @@ async def upload_music(
     path = await audio_file.save(music_file.filename)
 
     # save data in DB
-    metadata = MusicFile(
-        name=music_file.filename,
-        path=path,
-        **audio_file.metadata,
-    )
+    metadata = MusicFile(name=music_file.filename, path=path, **audio_file.metadata,)
+
+    # init db
+    db = get_db()
+
     fileDB = db.file
     file_id = fileDB.insert_one(metadata.dict()).inserted_id
     music = MusicInDB(
@@ -88,25 +88,18 @@ async def upload_music(
         elapsed_time=elapsed(request_time, response_time),
     )
     response = music_resp.UploadMusicResponse(
-        request_metadata=request_metadata,
-        response_metadata=response_metadata,
+        request_metadata=request_metadata, response_metadata=response_metadata,
     )
     return JSONResponse(
-        status_code=status.HTTP_201_CREATED,
-        content=jsonable_encoder(response),
+        status_code=status.HTTP_201_CREATED, content=jsonable_encoder(response),
     )
 
 
 @router.get(
     "/music",
     responses={
-        200: {
-            "model": music_resp.MusicResponse,
-            "description": "음악에 대한 정보를 반환합니다.",
-        },
-        404: {
-            "description": "요청한 id는 존재하지 않는 id입니다.",
-        },
+        200: {"model": music_resp.MusicResponse, "description": "음악에 대한 정보를 반환합니다.",},
+        404: {"description": "요청한 id는 존재하지 않는 id입니다.",},
     },
 )
 async def get_music_info(
@@ -130,25 +123,19 @@ async def get_music_info(
     if singer_name:
         request_data.update(dict(singer_name=singer_name))
     request_metadata = RequestMetadata(
-        request_id=str(uuid4()),
-        request_data=request_data,
+        request_id=str(uuid4()), request_data=request_data,
     )
+
+    # init db
+    db = get_db()
 
     # get music info from mongoDB
     fileDB = db.file
     musicDB = db.music
 
-    music_data = musicDB.find_one(
-        {
-            "name": music_name,
-            "singer": singer_name,
-        }
-    )
+    music_data = musicDB.find_one({"name": music_name, "singer": singer_name,})
     file_data = fileDB.find_one({"_id": ObjectId(music_data["file_id"])})
-    music = Music(
-        file=file_data,
-        **music_data,
-    )
+    music = Music(file=file_data, **music_data,)
 
     response_time = datetime.now()
     response_metadata = ResponseMetadata(
@@ -162,24 +149,16 @@ async def get_music_info(
         music=music,
     )
     return JSONResponse(
-        status_code=status.HTTP_200_OK,
-        content=jsonable_encoder(response),
+        status_code=status.HTTP_200_OK, content=jsonable_encoder(response),
     )
 
 
 @router.get(
     "/musics",
     responses={
-        200: {
-            "model": music_resp.MusicChartResponse,
-            "description": "음원 목록을 반환합니다.",
-        },
-        400: {
-            "description": "조회하려는 데이터의 범위를 초과했습니다.",
-        },
-        404: {
-            "description": "데이터가 존재하지 않습니다.",
-        },
+        200: {"model": music_resp.MusicChartResponse, "description": "음원 목록을 반환합니다.",},
+        400: {"description": "조회하려는 데이터의 범위를 초과했습니다.",},
+        404: {"description": "데이터가 존재하지 않습니다.",},
     },
 )
 async def serve_music_chart(
@@ -190,9 +169,11 @@ async def serve_music_chart(
     request_data = dict(limit=limit)
 
     request_metadata = RequestMetadata(
-        request_id=str(uuid4()),
-        request_data=request_data,
+        request_id=str(uuid4()), request_data=request_data,
     )
+
+    # init db
+    db = get_db()
 
     # get music info from mongoDB
     fileDB = db.file
@@ -202,12 +183,7 @@ async def serve_music_chart(
     music_datas = musicDB.find()[:limit]
     for music_data in music_datas:
         file_data = fileDB.find_one({"_id": ObjectId(music_data["file_id"])})
-        musics.append(
-            Music(
-                file=file_data,
-                **music_data,
-            )
-        )
+        musics.append(Music(file=file_data, **music_data,))
 
     response_time = datetime.now()
     response_metadata = ResponseMetadata(
@@ -221,6 +197,5 @@ async def serve_music_chart(
         musics=musics,
     )
     return JSONResponse(
-        status_code=status.HTTP_200_OK,
-        content=jsonable_encoder(response),
+        status_code=status.HTTP_200_OK, content=jsonable_encoder(response),
     )

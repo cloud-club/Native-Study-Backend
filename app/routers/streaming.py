@@ -7,7 +7,7 @@ from fastapi.responses import StreamingResponse
 
 from app import inspect, mc
 from app.common.type import t
-from app.database.connect import db
+from app.database.connect import get_db
 from app.schema.response import music as music_resp
 
 router = APIRouter()
@@ -43,6 +43,9 @@ async def stream_music(
     music_filter = dict(name=music_name)
     if singer_name:
         music_filter.update(dict(singer=singer_name))
+
+    # init db
+    db = get_db()
 
     musicDB = db.music
     music_data = musicDB.find_one(music_filter)
