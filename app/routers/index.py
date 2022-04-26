@@ -22,3 +22,13 @@ def ping():
 )
 def test_api():
     return PlainTextResponse("test api service")
+
+
+@router.get(
+    "/test2",
+    responses={
+        200: {"content": {"text": "test"}, "description": "check server status",}
+    },
+)
+def test_api2():
+    return PlainTextResponse("test api service2")
