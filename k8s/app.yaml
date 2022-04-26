@@ -3,7 +3,7 @@ kind: Deployment
 metadata:
   name: music-service-server
 spec:
-  replicas: 1
+  replicas: 2
   selector:
     matchLabels:
       run: music-service-server
