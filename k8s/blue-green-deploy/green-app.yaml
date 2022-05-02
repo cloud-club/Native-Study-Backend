@@ -1,10 +1,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: music-service-server
-  labels:
-    run: music-service-server
-  namespace: ms-server
+  name: music-service-server-green
 spec:
   replicas: 1
   selector:
