@@ -6,7 +6,7 @@ metadata:
     run: music-service-server
     version: stable
 spec:
-  replicas: 2
+  replicas: 1
   selector:
     matchLabels:
       run: music-service-server
