@@ -1,0 +1,28 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: music-service-server
+  labels:
+    run: music-service-server-green
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      run: music-service-server-green
+      color: green
+  template:
+    metadata:
+      labels:
+        run: music-service-server-green
+        color: green
+    spec:
+      containers:
+        - name: music-service-api-server
+          image: 52.79.185.138/jungmir/music_service:v0.1
+          ports:
+            - containerPort: 8090
+          resources:
+            limits:
+              memory: "128Mi"
+              cpu: "500m"
+          imagePullPolicy: Always

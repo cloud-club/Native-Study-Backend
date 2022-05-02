@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: ms-blue-green-svc
+spec:
+  selector:
+    run: music-service-server-blue
+  ports:
+    - port: 8090
+      targetPort: 8090
+      nodePort: 30007
+      protocol: TCP
+  type: NodePort
