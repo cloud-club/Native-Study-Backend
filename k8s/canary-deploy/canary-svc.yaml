@@ -1,7 +1,10 @@
 apiVersion: v1
 kind: Service
 metadata:
+  labels:
+    run: music-service-server
   name: ms-canary-svc
+  namespace: default
 spec:
   selector:
     app: music-service-server
@@ -9,4 +12,5 @@ spec:
     - port: 8090
       targetPort: 8090
       nodePort: 30007
+      protocol: TCP
   type: NodePort
