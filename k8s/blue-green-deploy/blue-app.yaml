@@ -1,19 +1,20 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: music-service-server-blue
+  name: music-service-server
   labels:
-    run: music-service-server-blue
+    run: music-service-server
+  namespace: ms-server
 spec:
   replicas: 1
   selector:
     matchLabels:
-      run: music-service-server-blue
+      run: music-service-server
       color: blue
   template:
     metadata:
       labels:
-        run: music-service-server-blue
+        run: music-service-server
         color: blue
     spec:
       containers:

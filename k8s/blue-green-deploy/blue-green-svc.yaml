@@ -1,10 +1,14 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: ms-blue-green-svc
+  name: music-service-server
+  labels:
+    name: music-service-server
+  namespace: ms-server
 spec:
   selector:
-    run: music-service-server-blue
+    run: music-service-server
+    color: blue
   ports:
     - port: 8090
       targetPort: 8090
