@@ -4,7 +4,7 @@ metadata:
   name: ms-canary-svc
 spec:
   selector:
-    app: myapp
+    app: music-service-server
   ports:
     - port: 8090
       targetPort: 8090
