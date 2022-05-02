@@ -1,7 +1,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: music-service-server
+  name: music-service-server-green
   labels:
     run: music-service-server-green
 spec:
