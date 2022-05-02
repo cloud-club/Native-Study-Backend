@@ -105,6 +105,8 @@ jobs:
         run: |
           echo $HARBOR_USER_PASSWORD |  docker login https://$HARBOR_HOST_NAME -u $HORBOR_USER --password-stdin
       - name: tagging and push into harbor
+        env:
+          IMAGE_TAG: v0.1
         run: |
-          docker tag music_service:dev $HARBOR_HOST_NAME/jungmir/music_service
-          docker push $HARBOR_HOST_NAME/jungmir/music_service
+          docker tag music_service:dev $HARBOR_HOST_NAME/jungmir/music_service:$IMAGE_TAG
+          docker push $HARBOR_HOST_NAME/jungmir/music_service:$IMAGE_TAG

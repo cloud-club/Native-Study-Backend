@@ -1,0 +1,29 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: music-service-server
+  labels:
+    run: music-service-server
+    version: stable
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      run: music-service-server
+      version: stable
+  template:
+    metadata:
+      labels:
+        run: music-service-server
+        version: stable
+    spec:
+      containers:
+        - name: music-service-api-server
+          image: 52.79.185.138/jungmir/music_service
+          ports:
+            - containerPort: 8090
+          resources:
+            limits:
+              memory: "128Mi"
+              cpu: "500m"
+          imagePullPolicy: Always
