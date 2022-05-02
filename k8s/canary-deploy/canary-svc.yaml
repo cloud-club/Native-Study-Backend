@@ -4,7 +4,6 @@ metadata:
   labels:
     run: music-service-server
   name: ms-canary-svc
-  namespace: default
 spec:
   selector:
     app: music-service-server
