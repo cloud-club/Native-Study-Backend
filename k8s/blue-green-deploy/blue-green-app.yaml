@@ -47,7 +47,7 @@ spec:
     spec:
       containers:
         - name: music-service-api-server
-          image: 52.79.185.138/jungmir/music_service
+          image: 52.79.185.138/jungmir/music_service:v0.1
           ports:
             - containerPort: 8090
           resources:
