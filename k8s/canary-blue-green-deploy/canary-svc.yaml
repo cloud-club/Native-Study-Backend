@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    run: music-service-server
+  name: ms-cbg-svc
+spec:
+  selector:
+    run: music-service-server
+  ports:
+    - port: 8090
+      targetPort: 8090
+      nodePort: 30007
+      protocol: TCP
+  type: NodePort
