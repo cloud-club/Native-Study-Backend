@@ -67,3 +67,6 @@ docker-compose up -d
 - [fastapi](https://fastapi.tiangolo.com/)
 - [poetry](https://python-poetry.org/docs/)
 - [pre-commit](https://pre-commit.com/)
+
+
+<!-- Security scan triggered at 2025-09-02 16:17:07 -->
